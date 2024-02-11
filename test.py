@@ -3,6 +3,7 @@ from torch import nn
 from torch.utils.data import DataLoader
 from torchvision import datasets
 from torchvision.transforms import ToTensor
+from matplotlib import pyplot as plt
 
 # Download training data from open datasets.
 training_data = datasets.FashionMNIST(
@@ -98,13 +99,20 @@ def test(dataloader, model, loss_fn):
     test_loss /= num_batches
     correct /= size
     print(f"Test Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n")
+    return correct
 
-epochs = 5
+epochs = 50
+accuracy = []
 for t in range(epochs):
     print(f"Epoch {t+1}\n-------------------------------")
     train(train_dataloader, model, loss_fn, optimizer)
-    test(test_dataloader, model, loss_fn)
+    accuracy.append(test(test_dataloader, model, loss_fn))
 print("Done!")
+print(accuracy)
+args = [i for i in range(1, epochs+1)]
+plt.plot(args, accuracy)
+plt.show()
+# torch.save(model.state_dict(), "model.pth")
+# print("Saved PyTorch Model State to model.pth")
 
-torch.save(model.state_dict(), "model.pth")
-print("Saved PyTorch Model State to model.pth")
+
